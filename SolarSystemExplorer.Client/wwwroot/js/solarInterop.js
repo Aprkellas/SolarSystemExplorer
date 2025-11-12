@@ -1,76 +1,31 @@
-﻿// wwwroot/js/solarInterop.js
-import * as THREE from '/lib/three/three.module.min.js';
-import { OrbitControls } from '/lib/three/OrbitControls.js';
+﻿// solarInterop.js
+import { boot } from './app.js';
 
-let scene, camera, controls, renderer, raycaster, mouse, cube;
 let dotRef = null;
 
-export function bind(dotNetRef) { dotRef = dotNetRef; }
-
 export function init(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) { console.error('Canvas not found:', canvasId); return; }
-
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio || 1);
-    renderer.setClearColor(0x0b1020, 1);
-
-    scene = new THREE.Scene();
-
-    camera = new THREE.PerspectiveCamera(60, 1, 0.1, 2000);
-    camera.position.set(2.5, 2.5, 4);
-
-    controls = new OrbitControls(camera, canvas);
-    controls.enableDamping = true;
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-    dir.position.set(4, 5, 6);
-    scene.add(dir);
-
-    const geo = new THREE.BoxGeometry(1, 1, 1);
-    const mat = new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.1, color: 0x88aaff });
-    cube = new THREE.Mesh(geo, mat);
-    cube.name = 'DemoCube';
-    scene.add(cube);
-
-    raycaster = new THREE.Raycaster();
-    mouse = new THREE.Vector2();
-    canvas.addEventListener('click', _onClick);
-
-    window.addEventListener('resize', _resize);
-    _resize();
-    _loop();
+    boot(canvasId);
 }
 
-function _resize() {
-    if (!renderer || !camera) return;
-    const c = renderer.domElement;
-    const r = c.getBoundingClientRect();
-    const w = Math.max(1, r.width | 0);
-    const h = Math.max(1, r.height | 0);
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+export function bind(ref) {
+    dotRef = ref;
 }
 
-function _loop() {
-    if (cube) {
-        cube.rotation.y += 0.01;
-        cube.rotation.x += 0.005;
-    }
-    controls?.update();
-    renderer.render(scene, camera);
-    requestAnimationFrame(_loop);
-}
+//export function addPlanet(planetDef) {
+//    // Dynamically import the planetLoader module to access addPlanet function
+//    import('./planets/planetLoader.js').then(module => {
+//        module.addPlanet(planetDef);
+//    });
+//})
 
-function _onClick(ev) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-    const hits = raycaster.intersectObjects(scene.children, true);
-    if (hits.length && dotRef) {
-        dotRef.invokeMethodAsync('OnMeshClicked', hits[0].object.name);
-    }
-}
+//export function notifyPlanetClicked(planetName) {
+//    if (dotRef) {
+//        dotRef.invokeMethodAsync('OnPlanetClicked', planetName);
+//    }
+//}
+
+//export function remotePlanetClick(planetName) {
+//    if (dotRef) {
+//        dotRef.invokeMethodAsync('OnRemotePlanetClick', planetName);
+//    }
+//}
