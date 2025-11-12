@@ -31,14 +31,13 @@ export const presetPlanets = [
         }
     },
 
-    // ♀ VENUS
     {
         key: 'venus',
         name: 'Venus',
         radiusKm: 6_051.8,
         distanceKm: 0.72 * AU,
         orbitPeriodDays: 225,
-        rotationHours: -5832.5, // retrograde rotation
+        rotationHours: -5832.5, 
         textures: {
             normal: '/assets/textures/venus/venus.jpg',
         }
