@@ -2,7 +2,7 @@
 import * as THREE from '/lib/three/three.module.min.js';
 import { getScene } from '../core/sceneHost.js';
 import { textureLoader } from '../core/loaders.js';
-import { SCALE } from '../core/constants.js';
+import { SIZESCALE, DISTANCESCALE, MIN_RADIUS_UNITS } from '../core/constants.js';
 import { onFrame } from '../core/update.js';
 
 const planets = new Map(); // key -> { group, mesh, rotSpeed, orbitSpeed, angle }
@@ -20,7 +20,7 @@ export function addPlanet(def) {
         // emissive sun mesh + point light
         const tex = def.textures?.albedo ? textureLoader.load(def.textures.albedo) : null;
         const sun = new THREE.Mesh(
-            new THREE.SphereGeometry(def.radiusKm * SCALE, 64, 64),
+            new THREE.SphereGeometry(def.radiusKm * SIZESCALE, 64, 64),
             new THREE.MeshBasicMaterial({ map: tex })
         );
         group.add(sun);
@@ -30,24 +30,28 @@ export function addPlanet(def) {
         return;
     }
 
-    // regular planet
     const mat = new THREE.MeshStandardMaterial({
         map: def.textures?.albedo ? textureLoader.load(def.textures.albedo) : null,
         normalMap: def.textures?.normal ? textureLoader.load(def.textures.normal) : null,
         roughness: 1, metalness: 0
     });
+    const radiusUnits = Math.max(def.radiusKm * SIZESCALE, MIN_RADIUS_UNITS);
+
     const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(def.radiusKm * SCALE, 64, 64),
+        new THREE.SphereGeometry(radiusUnits, 64, 64),
         mat
     );
     sphere.name = def.name ?? def.key;
-    sphere.position.set((def.distanceKm || 0) * SCALE, 0, 0);
+
+    // distance (pure linear)
+    const d = (def.distanceKm || 0) * DISTANCESCALE;
+    sphere.position.set(d, 0, 0);
     group.add(sphere);
 
     // optional clouds
     if (def.textures?.clouds) {
         const clouds = new THREE.Mesh(
-            new THREE.SphereGeometry(def.radiusKm * SCALE * 1.01, 64, 64),
+            new THREE.SphereGeometry(def.radiusKm * SIZESCALE * 1.01, 64, 64),
             new THREE.MeshStandardMaterial({
                 map: textureLoader.load(def.textures.clouds),
                 transparent: true,
