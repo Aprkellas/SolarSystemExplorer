@@ -1,0 +1,30 @@
+﻿@page "/"
+@inject IJSRuntime JS
+
+<MudText Typo="Typo.h5">Solar System Explorer (First Light)</MudText>
+<div style="border:1px solid #223; display:inline-block;">
+  <canvas id="solar-canvas" style="width: 900px; height: 500px;"></canvas>
+</div>
+<p>@_lastClick</p>
+
+@code {
+  DotNetObjectReference<Explorer>? _ref;
+  string _lastClick = "Click the cube!";
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (!firstRender) return;
+    _ref = DotNetObjectReference.Create(this);
+    await JS.InvokeVoidAsync("solarInterop.init", "solar-canvas");
+    await JS.InvokeVoidAsync("solarInterop.bind", _ref);
+  }
+
+  [JSInvokable]
+  public void OnMeshClicked(string name)
+  {
+    _lastClick = $"You clicked: {name}";
+    StateHasChanged();
+  }
+
+  public void Dispose() => _ref?.Dispose();
+}

@@ -1,33 +1,30 @@
-using SolarSystemExplorer.Client.Pages;
-using SolarSystemExplorer.Components;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+// If you’ll add Web API controllers later, keep this:
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseHsts();
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseWebAssemblyDebugging();
 }
 
 app.UseHttpsRedirection();
 
+// Serve the Blazor WASM files from the Client project
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(SolarSystemExplorer.Client._Imports).Assembly);
+// If you added controllers:
+app.MapControllers();
+
+// Fall back to the Client's index.html
+app.MapFallbackToFile("index.html");
 
 app.Run();
