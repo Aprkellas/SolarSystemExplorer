@@ -2,30 +2,39 @@
 @inject IJSRuntime JS
 
 <MudText Typo="Typo.h5">Solar System Explorer (First Light)</MudText>
-<div style="display:block; width: 920px;">
-    <canvas id="solar-canvas" style="display:block; width: 900px; height: 500px;"></canvas>
+<div style="border:1px solid #223; display:inline-block;">
+    <canvas id="solar-canvas" style="width: 900px; height: 500px;"></canvas>
 </div>
-
 <p>@_lastClick</p>
 
 @code {
-  DotNetObjectReference<Explorer>? _ref;
-  string _lastClick = "Click the cube!";
+    DotNetObjectReference<Explorer>? _ref;
+    IJSObjectReference? _module;
+    string _lastClick = "Click the cube!";
 
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-    if (!firstRender) return;
-    _ref = DotNetObjectReference.Create(this);
-    await JS.InvokeVoidAsync("solarInterop.init", "solar-canvas");
-    await JS.InvokeVoidAsync("solarInterop.bind", _ref);
-  }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
 
-  [JSInvokable]
-  public void OnMeshClicked(string name)
-  {
-    _lastClick = $"You clicked: {name}";
-    StateHasChanged();
-  }
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/solarInterop.js");
 
-  public void Dispose() => _ref?.Dispose();
+
+        _ref = DotNetObjectReference.Create(this);
+        await _module.InvokeVoidAsync("init", "solar-canvas");
+        await _module.InvokeVoidAsync("bind", _ref);
+    }
+
+    [JSInvokable]
+    public void OnMeshClicked(string name)
+    {
+        _lastClick = $"You clicked: {name}";
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _ref?.Dispose();
+        if (_module is not null)
+            await _module.DisposeAsync();
+    }
 }
