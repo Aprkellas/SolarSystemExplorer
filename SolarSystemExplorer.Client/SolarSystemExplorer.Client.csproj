@@ -14,4 +14,11 @@
     <PackageReference Include="MudBlazor.ThemeManager" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Services\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\modules\" />
+  </ItemGroup>
+
 </Project>
