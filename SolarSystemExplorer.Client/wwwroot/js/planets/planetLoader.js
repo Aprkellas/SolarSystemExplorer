@@ -3,7 +3,7 @@ import * as THREE from '/lib/three/three.module.min.js';
 import { getScene } from '../core/sceneHost.js';
 import { textureLoader } from '../core/loaders.js';
 import { SCALE } from '../core/constants.js';
-import { onFrame } from '../core/updateLoop.js';
+import { onFrame } from '../core/update.js';
 
 const planets = new Map(); // key -> { group, mesh, rotSpeed, orbitSpeed, angle }
 

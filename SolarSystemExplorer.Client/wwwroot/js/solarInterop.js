@@ -1,5 +1,4 @@
-﻿// solarInterop.js
-import { boot } from './app.js';
+﻿import { boot } from './app.js';
 
 let dotRef = null;
 

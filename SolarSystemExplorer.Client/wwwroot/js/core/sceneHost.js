@@ -1,7 +1,7 @@
 ﻿// core/sceneHost.js
 import * as THREE from '/lib/three/three.module.min.js';
-import { OrbitControls } from '/lib/threes/OrbitControls.js';
-import { onFrame, clearFrameCallbacks } from './updateLoop.js';
+import { OrbitControls } from '/lib/three/OrbitControls.js';
+import { onFrame, clearFrameCallbacks } from './update.js';
 
 let scene, camera, renderer, controls;
 export function init(canvasId) {

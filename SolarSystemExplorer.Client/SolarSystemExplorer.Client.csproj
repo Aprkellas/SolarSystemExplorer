@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\assets\textures\" />
     <Folder Include="wwwroot\modules\" />
   </ItemGroup>
 
