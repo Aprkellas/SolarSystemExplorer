@@ -18,7 +18,6 @@
 
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/solarInterop.js");
 
-
         _ref = DotNetObjectReference.Create(this);
         await _module.InvokeVoidAsync("init", "solar-canvas");
         await _module.InvokeVoidAsync("bind", _ref);
