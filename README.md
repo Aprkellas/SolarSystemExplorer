@@ -1,1 +1,1 @@
-Blazor application with ThreeJS environment for visualising the solar system. WORK IN PROGRESS 
+Blazor application with ThreeJS environment for visualising the solar system. Not done 
